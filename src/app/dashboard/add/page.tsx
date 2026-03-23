@@ -59,7 +59,7 @@ export default function AddInvoicePage() {
 
   return (
     <div className="flex-1 flex flex-col h-full relative">
-      <TopHeader />
+      <TopHeader title="Adicionar Fatura" subtitle="Cadastre seu novo consumo de água ou energia" />
       
       <div className="flex-1 overflow-y-auto p-4 md:p-8 hide-scrollbar pb-24 text-slate-800">
         <style>{`
@@ -77,7 +77,14 @@ export default function AddInvoicePage() {
           <div className="bg-white dark:bg-slate-900 w-full rounded-3xl shadow-xl overflow-hidden animate-fade-in border border-slate-100 dark:border-slate-800">
             {/* Formulário */}
             <form action={formAction} ref={formRef} className="p-6 md:p-8 space-y-8">
-                
+              
+              <div className="text-center space-y-1 mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Nova Fatura</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">
+                  Preencha os detalhes abaixo para registrar seus gastos mensais no seu Raio-X.
+                </p>
+              </div>
+
               {/* Campos Ocultos para armazenar os valores submetidos */}
               <input type="hidden" name="type" value={tipoConta} required />
               <input type="hidden" name="month" value={mesSelecionado} required />

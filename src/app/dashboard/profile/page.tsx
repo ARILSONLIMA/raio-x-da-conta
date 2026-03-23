@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import pool from '@/lib/db'
 import { redirect } from 'next/navigation'
 import { ProfileForm } from './profile-form'
+import { TopHeader } from '@/app/dashboard/top-header'
 import type { User } from '@/types'
 
 export default async function ProfilePage() {
@@ -18,12 +19,21 @@ export default async function ProfilePage() {
   if (!user) redirect('/login')
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Meu Perfil</h1>
-        <p className="text-slate-600 mt-2">Gerencie suas configurações e metas de gastos.</p>
+    <div className="flex-1 flex flex-col h-full relative">
+      <TopHeader title="Meu Perfil e Metas" subtitle="Gerencie as limitações e avisos do seu orçamento" />
+      
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 hide-scrollbar pb-24 text-slate-800">
+        <style>{`
+          .hide-scrollbar::-webkit-scrollbar { display: none; }
+          .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+          @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+          .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; transform: translateY(4px); }
+        `}</style>
+        
+        <div className="max-w-2xl mx-auto flex flex-col justify-center min-h-[calc(100vh-14rem)] animate-fade-in">
+          <ProfileForm user={user} />
+        </div>
       </div>
-      <ProfileForm user={user} />
     </div>
   )
 }
