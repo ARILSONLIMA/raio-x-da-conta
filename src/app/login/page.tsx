@@ -28,23 +28,23 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm">Raio-X da Conta</h1>
           </div>
 
-          <h2 className="text-xl font-semibold text-white mb-6 drop-shadow-sm">Login</h2>
+          <h2 className="text-xl font-semibold text-white mb-6 drop-shadow-sm">Entrar</h2>
 
           <form action={formAction} className="space-y-5">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-sm font-medium text-white/90 ml-1">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-white/90 ml-1">E-mail</label>
               <input 
                 id="email" 
                 name="email" 
                 type="email" 
-                placeholder="username@gmail.com" 
+                placeholder="nome@exemplo.com" 
                 required 
                 className="w-full px-4 py-3.5 rounded-xl bg-white/95 border-0 focus:ring-4 focus:ring-blue-400/30 text-slate-900 placeholder:text-slate-400 transition-all font-medium text-sm shadow-inner"
               />
             </div>
             
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-sm font-medium text-white/90 ml-1">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-white/90 ml-1">Senha</label>
               <input 
                 id="password" 
                 name="password" 
@@ -55,7 +55,7 @@ export default function LoginPage() {
               />
               <div className="flex justify-start mt-2">
                 <Link href="#" className="text-xs font-medium text-white/70 hover:text-white transition-colors ml-1 mt-1">
-                  Forgot Password?
+                  Esqueceu a senha?
                 </Link>
               </div>
             </div>
@@ -69,13 +69,13 @@ export default function LoginPage() {
               disabled={pending}
               className="w-full mt-2 py-3.5 px-4 bg-[#0a274c] hover:bg-[#061933] text-white font-semibold rounded-xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed border border-white/10"
             >
-              {pending ? 'Signing in...' : 'Sign in'}
+              {pending ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
 
           <div className="mt-8 flex items-center justify-center space-x-3">
             <div className="h-[1px] bg-white/20 flex-1"></div>
-            <span className="text-[11px] font-semibold text-white/60 uppercase tracking-widest">or continue with</span>
+            <span className="text-[11px] font-semibold text-white/60 uppercase tracking-widest">ou continue com</span>
             <div className="h-[1px] bg-white/20 flex-1"></div>
           </div>
 
@@ -97,9 +97,9 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 text-center text-sm">
-            <span className="text-white/70">Don't have an account yet? </span>
+            <span className="text-white/70">Não tem uma conta ainda? </span>
             <Link href="/register" className="text-white font-bold hover:underline">
-              Register for free
+              Cadastre-se grátis
             </Link>
           </div>
         </div>
