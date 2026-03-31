@@ -6,10 +6,10 @@
 ## v1 Requirements
 
 ### Authentication
-- [ ] **AUTH-01**: Fluxo de login funcional com JWT (jose) e Bcrypt.
+- [x] **AUTH-01**: Fluxo de login funcional com JWT (jose) e Bcrypt.
 
 ### Data
-- [ ] **DATA-01**: Conexão estável com MySQL via Server Actions.
+- [x] **DATA-01**: Conexão estável com MySQL via Server Actions.
 
 ### Dashboard
 - [ ] **DASH-01**: Renderização correta dos gráficos Recharts com dados do banco.
@@ -27,8 +27,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| DATA-01 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| DATA-01 | Phase 1 | Complete |
 | DASH-01 | Phase 2 | Pending |
 
 **Coverage:**
