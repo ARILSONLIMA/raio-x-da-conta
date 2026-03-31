@@ -1,7 +1,12 @@
 import { SignJWT, jwtVerify } from 'jose'
 
-const secretKey = process.env.JWT_SECRET || 'secret'
-const encodedKey = new TextEncoder().encode(secretKey)
+const secretKey = process.env.JWT_SECRET
+
+if (process.env.NODE_ENV === 'production' && !secretKey) {
+  throw new Error("JWT_SECRET environment variable is strictly required in production for security.")
+}
+
+const encodedKey = new TextEncoder().encode(secretKey || 'fallback_secret')
 
 export async function createSession(userId: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
