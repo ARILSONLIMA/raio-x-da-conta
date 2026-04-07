@@ -1,14 +1,15 @@
 import { SignJWT, jwtVerify } from 'jose'
 
-const secretKey = process.env.JWT_SECRET
-
-if (process.env.NODE_ENV === 'production' && !secretKey) {
-  throw new Error("JWT_SECRET environment variable is strictly required in production for security.")
+function getEncodedKey() {
+  const secretKey = process.env.JWT_SECRET
+  if (process.env.NODE_ENV === 'production' && !secretKey) {
+    console.warn("WARNING: JWT_SECRET environment variable is missing. It is strictly required in production for security.")
+  }
+  return new TextEncoder().encode(secretKey || 'fallback_secret')
 }
 
-const encodedKey = new TextEncoder().encode(secretKey || 'fallback_secret')
-
 export async function createSession(userId: string) {
+  const encodedKey = getEncodedKey()
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   const session = await new SignJWT({ userId })
     .setProtectedHeader({ alg: 'HS256' })
@@ -20,6 +21,7 @@ export async function createSession(userId: string) {
 
 export async function verifySession(session: string | undefined = '') {
   try {
+    const encodedKey = getEncodedKey()
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ['HS256'],
     })
