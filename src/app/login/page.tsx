@@ -53,11 +53,7 @@ export default function LoginPage() {
                 required
                 className="w-full px-4 py-3.5 rounded-xl bg-white/95 border-0 focus:ring-4 focus:ring-blue-400/30 text-slate-900 placeholder:text-slate-400 transition-all font-medium text-sm shadow-inner"
               />
-              <div className="flex justify-start mt-2">
-                <Link href="#" className="text-xs font-medium text-white/70 hover:text-white transition-colors ml-1 mt-1">
-                  Esqueceu a senha?
-                </Link>
-              </div>
+
             </div>
 
             {state?.error && (
