@@ -87,6 +87,7 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
   })
 
   return (
+    <>
     <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl shadow-slate-200/20 dark:shadow-none border border-slate-100 dark:border-slate-700/50 animate-fade-up overflow-hidden" style={{ animationDelay: '0.5s' }}>
       
       {/* Cabeçalho */}
@@ -174,6 +175,7 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
           </tbody>
         </table>
       </div>
+    </div>
 
       {/* Edit Modal (unchanged generic Card structure for quick editing) */}
       {editingInvoice && (
@@ -206,6 +208,6 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
           </Card>
         </div>
       )}
-    </div>
+    </>
   )
 }

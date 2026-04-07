@@ -7,30 +7,43 @@ import {
   Moon, Sparkles, Smartphone, ChevronRight, Menu, X, BarChart3
 } from 'lucide-react';
 
-const useScrollReveal = (threshold = 0.1) => {
+const useScrollReveal = (threshold = 0) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target); 
-        }
-      },
-      { threshold }
-    );
-
+    let isMounted = true;
     const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
+    if (!currentRef || isVisible) return;
+
+    // Se o elemento já estiver visível na tela inicial, forçamos a visibilidade
+    // Isso evita problemas do Strict Mode do React e melhora a LCP inicial
+    const rect = currentRef.getBoundingClientRect();
+    if (rect.top <= (window.innerHeight || document.documentElement.clientHeight) && rect.bottom >= 0) {
+      const timer = setTimeout(() => {
+        if (isMounted) setIsVisible(true);
+      }, 30);
+      return () => {
+        isMounted = false;
+        clearTimeout(timer);
+      };
     }
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && isMounted) {
+          setIsVisible(true);
+          observer.disconnect(); 
+        }
+      },
+      { threshold, rootMargin: '50px' }
+    );
+
+    observer.observe(currentRef);
+
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
+      isMounted = false;
+      observer.disconnect();
     };
   }, [threshold]);
 

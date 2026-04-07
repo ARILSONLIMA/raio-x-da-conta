@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 import { ComposedChart, Bar, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts'
 import { Droplet, Zap } from 'lucide-react'
 
@@ -30,6 +32,16 @@ export function DashboardCharts({ water, energy }: ChartsProps) {
 
   const waterData = formatData(water)
   const energyData = formatData(energy)
+
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <div className="flex flex-col gap-6 w-full animate-pulse min-h-[600px] bg-slate-50 dark:bg-slate-900/20 rounded-3xl" />
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full">
