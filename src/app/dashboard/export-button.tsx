@@ -38,9 +38,9 @@ export function ExportButton({ invoices }: { invoices: Invoice[] }) {
   }
 
   return (
-    <Button variant="outline" onClick={handleExport} className="gap-2 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700">
+    <Button variant="outline" onClick={handleExport} className="gap-2 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 px-3 sm:px-4">
       <Download className="h-4 w-4" />
-      Exportar CSV
+      <span className="hidden sm:inline">Exportar CSV</span>
     </Button>
   )
 }

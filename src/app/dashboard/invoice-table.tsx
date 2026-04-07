@@ -146,7 +146,7 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
                   <td className="py-4 px-6">{inv.consumption} <span className="text-slate-400 text-xs">{isAgua ? 'm³' : 'kWh'}</span></td>
                   <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-100">{formatCurrency(inv.cost)}</td>
                   <td className="py-4 px-6 text-right">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => setEditingInvoice(inv)}
                         className="p-2 text-slate-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-slate-700 rounded-lg transition-colors"

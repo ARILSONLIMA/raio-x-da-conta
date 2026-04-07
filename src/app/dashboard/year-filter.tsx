@@ -21,7 +21,7 @@ export function YearFilter({ availableYears }: { availableYears: number[] }) {
 
   return (
     <Select value={currentYear} onValueChange={handleYearChange}>
-      <SelectTrigger className="w-[180px] bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus:ring-[#00AEDB]">
+      <SelectTrigger className="w-[130px] sm:w-[180px] bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus:ring-[#00AEDB]">
         <SelectValue placeholder="Selecione..." />
       </SelectTrigger>
       <SelectContent>
