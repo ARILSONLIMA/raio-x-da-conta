@@ -1,25 +1,23 @@
 const http = require('http');
-const path = require('path');
-const next = require('next');
 
-const dev = false;
-const hostname = '0.0.0.0';
-const port = process.env.PORT || 3000;
+// Configurações básicas que não pesam no boot
+const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
 
-console.log("--- INICIANDO BOOT INSTANTÂNEO ---");
+console.log("--- ULTRA-SAFETY BOOT: INÍCIO IMEDIATO ---");
 
-let isReady = false;
-let app;
-let handle;
+let nextApp = null;
+let nextHandle = null;
+let isNextReady = false;
 
-// 1. ABRIR A PORTA IMEDIATAMENTE (Satisfaz a Hostinger e evita 503)
+// 1. CRIAR O SERVIDOR E ABRIR A PORTA IMEDIATAMENTE (CORRIDA CONTRA O 503)
 const server = http.createServer(async (req, res) => {
     try {
-        // Rota de diagnóstico de banco (Disponível na hora!)
+        // Rota de diagnóstico de banco (Lazy Load)
         if (req.url === '/api/diag-db') {
             res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
             try {
-                const mysql = require('mysql2/promise');
+                const mysql = require('mysql2/promise'); // Carrega só quando precisa
                 const conn = await mysql.createConnection({
                     host: process.env.DB_HOST || 'localhost',
                     user: process.env.DB_USER,
@@ -27,43 +25,50 @@ const server = http.createServer(async (req, res) => {
                     database: process.env.DB_NAME
                 });
                 await conn.query('SELECT 1');
-                res.end("SISTEMA ONLINE - CONEXÃO COM O BANCO: SUCESSO!");
+                res.end("ULTRA-SAFETY: BANCO CONECTADO COM SUCESSO!");
                 await conn.end();
             } catch (e) {
-                res.end("SISTEMA ONLINE - ERRO DE BANCO: " + e.message + "\n\nUser: " + process.env.DB_USER + "\nHost: " + process.env.DB_HOST);
+                res.end("ULTRA-SAFETY: ERRO NO BANCO -> " + e.message + "\n\nUser: " + process.env.DB_USER);
             }
             return;
         }
 
-        // Se o Next.js ainda está carregando...
-        if (!isReady) {
+        // Se o Next ainda não está pronto
+        if (!isNextReady) {
             res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
-            res.end("O sistema está iniciando... Por favor, aguarde 15 segundos e atualize a página.");
+            res.end("O sistema está carregando o motor pesado (Next.js)... Aguarde 10 segundos e atualize.");
             return;
         }
 
-        // Deixa o Next.js resolver o restante
-        const parsedUrl = new URL(req.url, `http://${hostname}:${port}`);
-        await handle(req, res, parsedUrl);
+        const { URL } = require('url'); // Lazy load
+        const parsedUrl = new URL(req.url, `http://${HOST}:${PORT}`);
+        await nextHandle(req, res, parsedUrl);
     } catch (err) {
-        console.error('Erro na requisição:', err);
+        console.error('Request Error:', err);
         res.statusCode = 500;
         res.end('Erro interno');
     }
 });
 
-server.listen(port, hostname, () => {
-    console.log(`> Servidor ouvindo porta ${port}. Hostinger satisfeita.`);
+server.listen(PORT, HOST, () => {
+    console.log(`> PORTA ${PORT} ABERTA! Servidor vivo.`);
     
-    // 2. INICIAR NEXT.JS EM SEGUNDO PLANO
-    console.log("Iniciando preparação do Next.js...");
-    app = next({ dev, dir: __dirname, hostname, port });
-    handle = app.getRequestHandler();
-    
-    app.prepare().then(() => {
-        isReady = true;
-        console.log(">>> NEXT.JS PRONTO E RODANDO! <<<");
-    }).catch(err => {
-        console.error("FALHA AO CARREGAR NEXT.JS:", err);
+    // 2. CARREGAR O NEXT.JS EM SEGUNDO PLANO SÓ DEPOIS QUE A PORTA ESTAR ABERTA
+    process.nextTick(() => {
+        console.log("Iniciando carregamento do Next.js (Lazy)...");
+        try {
+            const next = require('next');
+            nextApp = next({ dev: false, dir: __dirname, hostname: HOST, port: PORT });
+            nextHandle = nextApp.getRequestHandler();
+            
+            nextApp.prepare().then(() => {
+                isNextReady = true;
+                console.log(">>> MOTOR NEXT.JS CARREGADO COM SUCESSO! Site pronto. <<<");
+            }).catch(e => {
+                console.error("Erro no prepare:", e);
+            });
+        } catch (e) {
+            console.error("Erro no require(next):", e);
+        }
     });
 });
