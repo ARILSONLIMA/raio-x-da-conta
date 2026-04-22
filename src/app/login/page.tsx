@@ -25,7 +25,7 @@ export default function LoginPage() {
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] rounded-[2rem] p-8 sm:p-10 font-sans">
 
           <div className="flex justify-center mb-8">
-            <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm">Raio-X da Conta</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm">raioxdaconta.online</h1>
           </div>
 
           <h2 className="text-xl font-semibold text-white mb-6 drop-shadow-sm">Entrar</h2>

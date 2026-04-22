@@ -12,40 +12,46 @@ const useScrollReveal = (threshold = 0) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let isMounted = true;
     const currentRef = ref.current;
-    if (!currentRef || isVisible) return;
+    if (!currentRef) return;
 
-    // Se o elemento já estiver visível na tela inicial, forçamos a visibilidade
-    // Isso evita problemas do Strict Mode do React e melhora a LCP inicial
-    const rect = currentRef.getBoundingClientRect();
-    if (rect.top <= (window.innerHeight || document.documentElement.clientHeight) && rect.bottom >= 0) {
-      const timer = setTimeout(() => {
-        if (isMounted) setIsVisible(true);
-      }, 30);
-      return () => {
-        isMounted = false;
-        clearTimeout(timer);
-      };
-    }
+    // Se o elemento já estiver visível na tela inicial ou próximo dela, forçamos a visibilidade
+    // Isso resolve falhas de detecção em carregamentos rápidos ou refreshes
+    const checkVisibility = () => {
+      if (isVisible) return;
+      const rect = currentRef.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      
+      if (rect.top <= windowHeight + 100 && rect.bottom >= -100) {
+        setIsVisible(true);
+        return true;
+      }
+      return false;
+    };
+
+    // Verificação imediata
+    if (checkVisibility()) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && isMounted) {
+        if (entry.isIntersecting) {
           setIsVisible(true);
           observer.disconnect(); 
         }
       },
-      { threshold, rootMargin: '50px' }
+      { threshold, rootMargin: '100px' }
     );
 
     observer.observe(currentRef);
 
+    // Backup: verificação no scroll caso o observer falhe
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+
     return () => {
-      isMounted = false;
       observer.disconnect();
+      window.removeEventListener('scroll', checkVisibility);
     };
-  }, [threshold]);
+  }, [isVisible, threshold]);
 
   return [ref, isVisible] as const;
 };
@@ -105,7 +111,7 @@ export default function LandingClient() {
               <div className="bg-cyan-500 p-2 rounded-lg text-white flex items-center justify-center">
                 <BarChart3 size={24} />
               </div>
-              <span className="font-bold text-xl text-slate-900 tracking-tight">Raio-X da Conta</span>
+              <span className="font-bold text-xl text-slate-900 tracking-tight">raioxdaconta.online</span>
             </div>
 
             {/* Desktop Menu */}
@@ -398,7 +404,7 @@ export default function LandingClient() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
           <div className="flex items-center gap-2 mb-6 opacity-80">
             <BarChart3 className="text-slate-400" size={20} />
-            <span className="font-bold text-lg text-slate-600">Raio-X da Conta</span>
+            <span className="font-bold text-lg text-slate-600">raioxdaconta.online</span>
           </div>
           
           <p className="text-slate-500 text-sm mb-2 text-center">

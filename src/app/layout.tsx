@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Raio-X da Conta",
+  title: "raioxdaconta.online",
   description: "Acompanhe e controle seus gastos de água e energia.",
 };
 

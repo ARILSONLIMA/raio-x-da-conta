@@ -70,9 +70,9 @@ export async function login(prevState: any, formData: FormData) {
       sameSite: 'lax',
       path: '/'
     })
-  } catch (err) {
+  } catch (err: any) {
     console.error('Login Error:', err)
-    return { error: 'Erro ao fazer login' }
+    return { error: 'Erro ao fazer login: ' + (err?.message || 'Falha Desconhecida') }
   }
 
   redirect('/dashboard')
