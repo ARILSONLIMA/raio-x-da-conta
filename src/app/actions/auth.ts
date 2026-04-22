@@ -18,8 +18,10 @@ export async function register(prevState: any, formData: FormData) {
   const name = formData.get('name') as string
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const confirmPassword = formData.get('confirmPassword') as string
 
-  if (!name || !email || !password) return { error: 'Preencha todos os campos' }
+  if (!name || !email || !password || !confirmPassword) return { error: 'Preencha todos os campos' }
+  if (password !== confirmPassword) return { error: 'As senhas não coincidem' }
 
   try {
     const [existingRows] = await pool.query<any[]>('SELECT * FROM User WHERE email = ?', [email])

@@ -3,9 +3,9 @@ const mysql = require('mysql2/promise');
 async function main() {
   const pool = mysql.createPool({
     host: 'srv1074.hstgr.io',
-    user: 'u235621162_raioxdbuser',
+    user: 'u235621162_raiox',
     password: 'Alfa#972',
-    database: 'u235621162_raioxdb',
+    database: 'u235621162_raiox',
     port: 3306,
   });
 
