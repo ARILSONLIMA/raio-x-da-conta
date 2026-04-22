@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise'
 
 const poolConfig = {
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || 'srv1074.hstgr.io',
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
