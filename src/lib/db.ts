@@ -15,11 +15,8 @@ const poolConfig = {
 
 const globalForDb = globalThis as unknown as { pool: mysql.Pool | undefined }
 
+// Conexão do pool de banco de dados
 const pool = globalForDb.pool ?? mysql.createPool(poolConfig)
-
-// Log de erro aprimorado para o console da Hostinger
-pool.on('error', (err) => {
-  console.error('ERRO NO POOL DE CONEXÃO DO BANCO:', err.message);
-});
+if (process.env.NODE_ENV !== 'production') globalForDb.pool = pool;
 
 export default pool

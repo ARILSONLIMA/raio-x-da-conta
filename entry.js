@@ -1,33 +1,17 @@
+const fs = require('fs');
 const http = require('http');
-const path = require('path');
-const next = require('next');
 
-const dev = false;
-const hostname = '0.0.0.0';
-const port = process.env.PORT || 3000;
-
-// Garantir que o Next.js olhe para a pasta atual como raiz
-const app = next({ dev, dir: __dirname, hostname, port });
-const handle = app.getRequestHandler();
-
-console.log("--- INICIANDO SERVIDOR OFICIAL NEXT.JS ---");
-console.log("CWD:", __dirname);
-
-app.prepare().then(() => {
-  http.createServer(async (req, res) => {
-    try {
-      const parsedUrl = new URL(req.url, `http://${hostname}:${port}`);
-      await handle(req, res, parsedUrl);
-    } catch (err) {
-      console.error('Erro no processamento da página:', err);
-      res.statusCode = 500;
-      res.end('Erro interno do servidor');
+http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+    let exists = fs.existsSync('.next/standalone/server.js');
+    let content = "";
+    if (exists) {
+        content = "Standalone server.js ENCONTRADO!";
+    } else {
+        content = "Standalone NÃO encontrado em .next/standalone/server.js\n";
+        if (fs.existsSync('.next')) {
+            content += "Conteúdo de .next: " + fs.readdirSync('.next').join(', ');
+        }
     }
-  }).listen(port, hostname, (err) => {
-    if (err) throw err;
-    console.log(`> Servidor pronto em http://${hostname}:${port}`);
-  });
-}).catch(err => {
-    console.error("FALHA NA INICIALIZAÇÃO:", err);
-    process.exit(1);
-});
+    res.end(content);
+}).listen(process.env.PORT || 3000, '0.0.0.0');
