@@ -49,8 +49,8 @@ const server = http.createServer(async (req, res) => {
         }
 
         // Handoff para o Next.js (Restaura Layout, API e Dashboard)
-        const { URL } = require('url');
-        const parsedUrl = new URL(req.url, `http://${HOST}:${PORT}`);
+        const { parse } = require('url');
+        const parsedUrl = parse(req.url, true);
         await nextHandle(req, res, parsedUrl);
 
     } catch (err) {
