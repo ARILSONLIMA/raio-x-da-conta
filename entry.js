@@ -1,41 +1,55 @@
 const http = require('http');
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
 
-http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+// Configurações
+const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
+
+console.log("--- INICIANDO SERVIDOR DE PRODUÇÃO ---");
+
+// Tentar carregar o modo Standalone (mais eficiente)
+const standalonePath = path.join(__dirname, '.next', 'standalone', 'server.js');
+
+if (fs.existsSync(standalonePath)) {
+    console.log("Modo Standalone detectado! Delegando para .next/standalone/server.js");
+    // O standalone da Next.js espera ser carregado via require se for usado como entrypoint customizado
+    // ou simplesmente rodar o arquivo. Na Hostinger, vamos tentar incluir o script.
+    try {
+        require(standalonePath);
+    } catch (e) {
+        console.error("Erro ao carregar Standalone:", e);
+        startManualNext();
+    }
+} else {
+    console.log("Standalone não encontrado. Iniciando modo Next.js manual...");
+    startManualNext();
+}
+
+function startManualNext() {
+    const next = require('next');
+    const app = next({ dev: false, dir: __dirname });
+    const handle = app.getRequestHandler();
+
+    console.log("Preparando Next.js (app.prepare)...");
     
-    let report = "--- DIAGNÓSTICO DE ERRO (FASE 2) ---\n\n";
-
-    // 1. Tentar ler stderr.log
-    try {
-        if (fs.existsSync('stderr.log')) {
-            report += "CONTEÚDO DO stderr.log:\n" + fs.readFileSync('stderr.log', 'utf8') + "\n\n";
-        } else {
-            report += "Arquivo stderr.log não encontrado.\n\n";
-        }
-    } catch (e) {
-        report += "Erro ao ler stderr.log: " + e.message + "\n\n";
-    }
-
-    // 2. Testar carregamento do Next.js
-    try {
-        report += "Testando require('next')...\n";
-        const next = require('next');
-        report += "Sucesso: Biblioteca 'next' carregada.\n\n";
-        
-        report += "Testando inicialização do app (sem start)...\n";
-        const app = next({ dev: false, dir: __dirname });
-        report += "Sucesso: Objeto 'app' criado.\n\n";
-    } catch (e) {
-        report += "FALHA ao carregar Next.js: " + e.stack + "\n\n";
-    }
-
-    // 3. Info do sistema
-    report += "INFO DO SISTEMA:\n";
-    report += "CWD: " + process.cwd() + "\n";
-    report += "NODE_ENV: " + process.env.NODE_ENV + "\n";
-    report += "PORT: " + process.env.PORT + "\n";
-
-    res.end(report);
-}).listen(process.env.PORT || 3000, '0.0.0.0');
+    app.prepare().then(() => {
+        console.log("Next.js preparado com sucesso!");
+        http.createServer((req, res) => {
+            handle(req, res);
+        }).listen(PORT, HOST, (err) => {
+            if (err) {
+                console.error("Erro ao abrir porta:", err);
+                return;
+            }
+            console.log(`> Servidor rodando em http://${HOST}:${PORT}`);
+        });
+    }).catch(err => {
+        console.error("ERRO FATAL NA PREPARAÇÃO:", err);
+        // Fallback de emergência para não dar 503
+        http.createServer((req, res) => {
+            res.writeHead(500, {'Content-Type': 'text/plain'});
+            res.end("Erro ao iniciar Next.js: " + err.message);
+        }).listen(PORT, HOST);
+    });
+}
