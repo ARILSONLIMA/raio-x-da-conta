@@ -1,9 +1,10 @@
 const http = require('http');
 const PORT = process.env.PORT || 3000;
 
-// 1. LIGAÇÃO INSTANTÂNEA (Mata o 503 na hora)
+console.log("--- FINAL BOOT: SEM REDIRECIONAMENTO ---");
+
 const server = http.createServer(async (req, res) => {
-    // Rota de teste de Banco de Dados que NÃO DEPENDE do Next.js
+    // 1. Rota de diagnóstico de banco
     if (req.url === '/api/diag-db') {
         res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
         try {
@@ -15,16 +16,19 @@ const server = http.createServer(async (req, res) => {
                 database: process.env.DB_NAME
             });
             await conn.query('SELECT 1');
-            res.end("BANCO DE DADOS: CONECTADO COM SUCESSO!");
+            res.end("SUCESSO: O Banco de Dados está conectado corretamente!");
             await conn.end();
         } catch (e) {
-            res.end("ERRO NO BANCO: " + e.message + "\nVerifique se a senha no painel é Alfa#972");
+            res.end("ERRO NO BANCO: " + e.message + "\n\nPasso a passo:\n1. Vá no painel da Hostinger.\n2. Mude a senha do usuário " + process.env.DB_USER + " para Alfa#972 manualmente.");
         }
         return;
     }
 
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end("O site está subindo! Aguarde 10 segundos e atualize a página.");
-}).listen(PORT, '0.0.0.0');
+    res.end("O site está ONLINE e aguardando a conexão com o banco ser corrigida.\n\nAcesse: /api/diag-db para testar o banco.");
+});
 
-console.log("Servidor de emergência rodando na porta " + PORT);
+// REMOVIDO '0.0.0.0' para evitar o comportamento de redirecionamento em alguns navegadores
+server.listen(PORT, () => {
+    console.log("Servidor pronto na porta " + PORT);
+});
