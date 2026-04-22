@@ -1,24 +1,41 @@
 const http = require('http');
 const fs = require('fs');
+const path = require('path');
 
 http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-    let dirFiles = [];
+    
+    let report = "--- DIAGNÓSTICO DE ERRO (FASE 2) ---\n\n";
+
+    // 1. Tentar ler stderr.log
     try {
-        dirFiles = fs.readdirSync('.');
+        if (fs.existsSync('stderr.log')) {
+            report += "CONTEÚDO DO stderr.log:\n" + fs.readFileSync('stderr.log', 'utf8') + "\n\n";
+        } else {
+            report += "Arquivo stderr.log não encontrado.\n\n";
+        }
     } catch (e) {
-        dirFiles = ["Erro ao ler pasta: " + e.message];
+        report += "Erro ao ler stderr.log: " + e.message + "\n\n";
     }
 
-    const info = {
-        status: "O servidor Node.js está ONLINE!",
-        cwd: process.cwd(),
-        env_port: process.env.PORT,
-        node_version: process.version,
-        files_in_root: dirFiles
-    };
-    
-    res.end(JSON.stringify(info, null, 2));
-}).listen(process.env.PORT || 3000, '0.0.0.0', () => {
-    console.log("Diagnostic server started on port " + (process.env.PORT || 3000));
-});
+    // 2. Testar carregamento do Next.js
+    try {
+        report += "Testando require('next')...\n";
+        const next = require('next');
+        report += "Sucesso: Biblioteca 'next' carregada.\n\n";
+        
+        report += "Testando inicialização do app (sem start)...\n";
+        const app = next({ dev: false, dir: __dirname });
+        report += "Sucesso: Objeto 'app' criado.\n\n";
+    } catch (e) {
+        report += "FALHA ao carregar Next.js: " + e.stack + "\n\n";
+    }
+
+    // 3. Info do sistema
+    report += "INFO DO SISTEMA:\n";
+    report += "CWD: " + process.cwd() + "\n";
+    report += "NODE_ENV: " + process.env.NODE_ENV + "\n";
+    report += "PORT: " + process.env.PORT + "\n";
+
+    res.end(report);
+}).listen(process.env.PORT || 3000, '0.0.0.0');
