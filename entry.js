@@ -1,32 +1,53 @@
+const http = require('http');
 const path = require('path');
+const next = require('next');
 
-// Configurações de ambiente para o Next.js Standalone
-process.env.NODE_ENV = 'production';
-process.env.PORT = process.env.PORT || 3000;
-process.env.HOSTNAME = '0.0.0.0';
+const dev = false;
+const hostname = '0.0.0.0';
+const port = process.env.PORT || 3000;
 
-console.log("--- BOOT STANDALONE NEXT.JS ---");
-console.log("Porta:", process.env.PORT);
-console.log("Diretório:", __dirname);
+// Inicializando o Next.js apontando para a raiz do projeto
+const app = next({ dev, dir: __dirname, hostname, port });
+const handle = app.getRequestHandler();
 
-// O servidor standalone gerado pelo Next.js fica em .next/standalone/server.js
-// Ele é auto-contido e muito mais leve que o servidor normal.
-const standaloneServerPath = path.join(__dirname, '.next', 'standalone', 'server.js');
+console.log("--- BOOT FINAL: REESTRUTURAÇÃO DE ASSETS ---");
 
-try {
-    if (require('fs').existsSync(standaloneServerPath)) {
-        console.log("Iniciando motor standalone...");
-        require(standaloneServerPath);
-    } else {
-        throw new Error("Arquivo standalone não encontrado após o build.");
+app.prepare().then(() => {
+  http.createServer(async (req, res) => {
+    try {
+      // Rota de diagnóstico de banco de dados
+      if (req.url === '/api/diag-db') {
+          res.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+          try {
+              const mysql = require('mysql2/promise');
+              const conn = await mysql.createConnection({
+                  host: process.env.DB_HOST || 'localhost',
+                  user: process.env.DB_USER,
+                  password: process.env.DB_PASSWORD,
+                  database: process.env.DB_NAME
+              });
+              await conn.query('SELECT 1');
+              res.end("CONEXÃO COM O BANCO: SUCESSO!");
+              await conn.end();
+          } catch (e) {
+              res.end("ERRO DE BANCO: " + e.message + "\n\nUser: " + process.env.DB_USER + "\nHost: " + process.env.DB_HOST);
+          }
+          return;
+      }
+
+      // Deixa o Next.js resolver tudo (incluindo _next/static e public)
+      const parsedUrl = new URL(req.url, `http://${hostname}:${port}`);
+      await handle(req, res, parsedUrl);
+    } catch (err) {
+      console.error('Erro na requisição:', err);
+      res.statusCode = 500;
+      res.end('Erro interno');
     }
-} catch (err) {
-    console.error("FALHA AO INICIAR STANDALONE:", err.message);
-    
-    // Fallback de emergência caso o standalone falhe por algum motivo de path
-    const http = require('http');
-    http.createServer((req, res) => {
-        res.writeHead(500, {'Content-Type': 'text/plain; charset=utf-8'});
-        res.end("Erro Crítico: O motor standalone não pôde ser iniciado.\n" + err.stack);
-    }).listen(process.env.PORT, '0.0.0.0');
-}
+  }).listen(port, hostname, (err) => {
+    if (err) throw err;
+    console.log(`> Pronto em http://${hostname}:${port}`);
+  });
+}).catch(err => {
+    console.error("ERRO AO PREPARAR APP:", err);
+    process.exit(1);
+});
