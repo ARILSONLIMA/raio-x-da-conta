@@ -3,126 +3,175 @@
 import { useActionState, useState } from 'react'
 import { register } from '@/app/actions/auth'
 import Link from 'next/link'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, UserRoundPlus, Mail, Lock, User, CheckCircle2 } from 'lucide-react'
+import { AuthLeftPanel } from '@/components/auth/AuthLeftPanel'
 
 export default function RegisterPage() {
   const [state, formAction, pending] = useActionState(register, null)
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#0f4c81] via-[#053059] to-[#011426] flex items-center justify-center p-4 font-sans">
-      {/* Decorative Background Shapes */}
-      <div className="absolute top-[10%] right-[20%] w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-[10%] left-[20%] w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="flex h-screen w-full overflow-hidden bg-gray-50 text-gray-800 antialiased font-sans">
+      {/* ── Left panel ── */}
+      <AuthLeftPanel />
 
-      {/* Additional 3D-like floating abstract elements CSS-based */}
-      <div className="absolute top-1/4 right-1/4 w-32 h-32 border-[12px] border-cyan-400/20 rounded-full blur-[2px] animate-[bounce_8s_infinite] pointer-events-none"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-40 h-20 bg-gradient-to-tr from-blue-400/10 to-cyan-400/20 backdrop-blur-md rounded-full rotate-[-45deg] border border-white/5 animate-[pulse_6s_infinite] pointer-events-none shadow-xl"></div>
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300/20 rounded-full blur-[3px] animate-[ping_10s_infinite] pointer-events-none"></div>
-      <div className="absolute bottom-1/3 right-1/3 w-24 h-24 border-[8px] border-blue-400/10 rounded-full blur-[1px] animate-[bounce_12s_infinite] pointer-events-none"></div>
+      {/* ── Right panel — form ── */}
+      <div className="w-full md:w-1/2 h-full flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-white relative z-30 overflow-y-auto overflow-x-hidden">
+        <div className="w-full max-w-md auth-animate-fade-in">
 
-      <div className="relative z-10 w-full max-w-[420px]">
-        {/* Glassmorphism Card */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] rounded-[2rem] p-8 sm:p-10 font-sans">
-
-          <div className="flex justify-center mb-6">
-            <h1 className="text-2xl font-bold text-white tracking-tight drop-shadow-sm">Raio-X da Conta</h1>
+          {/* Logo + brand */}
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4 text-[#0d9488]">
+              <div className="w-12 h-12 bg-[#f0fdfa] rounded-xl flex items-center justify-center border border-[#ccfbf1] shadow-sm shrink-0">
+                <UserRoundPlus size={26} />
+              </div>
+              <span className="text-2xl font-extrabold text-gray-900 tracking-tight">Criar Conta</span>
+            </div>
+            <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-tight mb-2">
+              Comece a economizar
+            </h2>
+            <p className="text-gray-500 text-base">Preencha os dados abaixo para se cadastrar.</p>
           </div>
 
-          <h2 className="text-xl font-semibold text-white mb-6 drop-shadow-sm">Criar Conta</h2>
-
-          <form action={formAction} className="space-y-4">
-            <div className="space-y-1.5">
-              <label htmlFor="name" className="block text-sm font-medium text-white/90 ml-1">Nome completo</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Seu Nome e Sobrenome"
-                required
-                className="w-full px-4 py-3.5 rounded-xl bg-white/95 border-0 focus:ring-4 focus:ring-cyan-400/30 text-slate-900 placeholder:text-slate-400 transition-all font-medium text-sm shadow-inner"
-              />
+          {/* Form */}
+          <form action={formAction} className="flex flex-col gap-4">
+            {/* Full name */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Nome Completo
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#14b8a6] transition-colors">
+                  <User size={18} />
+                </div>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  minLength={3}
+                  placeholder="João da Silva"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14b8a6] focus:border-[#14b8a6] text-sm transition-all outline-none bg-white text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-sm font-medium text-white/90 ml-1">E-mail</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="nome@exemplo.com"
-                required
-                className="w-full px-4 py-3.5 rounded-xl bg-white/95 border-0 focus:ring-4 focus:ring-cyan-400/30 text-slate-900 placeholder:text-slate-400 transition-all font-medium text-sm shadow-inner"
-              />
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                E-mail
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#14b8a6] transition-colors">
+                  <Mail size={18} />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="seu@email.com"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14b8a6] focus:border-[#14b8a6] text-sm transition-all outline-none bg-white text-gray-900 placeholder:text-gray-400"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-sm font-medium text-white/90 ml-1">Senha</label>
-              <div className="relative">
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Senha
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#14b8a6] transition-colors">
+                  <Lock size={18} />
+                </div>
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  type={showPassword ? 'text' : 'password'}
                   required
-                  className="w-full px-4 py-3.5 rounded-xl bg-white/95 border-0 focus:ring-4 focus:ring-cyan-400/30 text-slate-900 placeholder:text-slate-400 transition-all font-medium text-sm shadow-inner pr-12"
+                  minLength={8}
+                  placeholder="••••••••"
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14b8a6] focus:border-[#14b8a6] text-sm transition-all outline-none bg-white text-gray-900 placeholder:text-gray-400"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors focus:outline-none"
-                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#0d9488] focus:outline-none transition-colors"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/90 ml-1">Verificação de Senha</label>
-              <div className="relative">
+            {/* Confirm password */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                Verificação de Senha
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[#14b8a6] transition-colors">
+                  <CheckCircle2 size={18} />
+                </div>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  type={showConfirm ? 'text' : 'password'}
                   required
-                  className="w-full px-4 py-3.5 rounded-xl bg-white/95 border-0 focus:ring-4 focus:ring-cyan-400/30 text-slate-900 placeholder:text-slate-400 transition-all font-medium text-sm shadow-inner pr-12"
+                  minLength={8}
+                  placeholder="••••••••"
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#14b8a6] focus:border-[#14b8a6] text-sm transition-all outline-none bg-white text-gray-900 placeholder:text-gray-400"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors focus:outline-none"
-                  aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  aria-label={showConfirm ? 'Ocultar senha' : 'Mostrar senha'}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-[#0d9488] focus:outline-none transition-colors"
                 >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
+            {/* Error */}
             {state?.error && (
-              <p className="text-sm font-medium text-red-200 bg-red-500/20 p-3 rounded-xl border border-red-500/30 backdrop-blur-sm mt-2">{state.error}</p>
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-center gap-3 auth-animate-fade-in">
+                <AlertCircle size={20} className="shrink-0" />
+                <span className="text-sm font-medium text-red-700">{state.error}</span>
+              </div>
             )}
 
+            {/* Submit */}
             <button
               type="submit"
+              id="btn-signup"
               disabled={pending}
-              className="w-full mt-4 py-3.5 px-4 bg-[#0a274c] hover:bg-[#061933] text-white font-semibold rounded-xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed border border-white/10"
+              className="w-full flex justify-center items-center py-3.5 px-4 mt-2 border border-transparent rounded-lg shadow-md text-sm font-bold text-white bg-gray-900 hover:bg-gray-700 focus:outline-none transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
             >
-              {pending ? 'Criando conta...' : 'Criar Conta'}
+              <span>{pending ? 'Criando conta...' : 'Criar Minha Conta'}</span>
             </button>
           </form>
 
-          <div className="mt-8 text-center text-sm">
-            <span className="text-white/70">Já tem uma conta? </span>
-            <Link href="/login" className="text-white font-bold hover:underline">
-              Entrar agora
-            </Link>
+          {/* Footer link */}
+          <div className="mt-6 pt-6 border-t border-gray-100 text-center">
+            <p className="text-gray-600">
+              Já tem uma conta?{' '}
+              <Link
+                href="/login"
+                className="font-bold text-[#0d9488] hover:text-[#14b8a6] hover:underline ml-1 transition-all"
+              >
+                Fazer login
+              </Link>
+            </p>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-xs text-gray-400">&copy; 2026 RaioX da Conta. Todos os direitos reservados.</p>
           </div>
         </div>
       </div>
     </div>
   )
 }
-

@@ -45,6 +45,15 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Brand teal colors */
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
 }
 
 :root {
@@ -126,4 +135,44 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Auth page animations */
+@keyframes auth-fill-width {
+  from { width: 0%; }
+}
+.auth-animate-bar {
+  animation: auth-fill-width 1.2s ease-out forwards;
+}
+
+@keyframes auth-fade-in-slide {
+  from { opacity: 0; transform: translateX(15px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.auth-animate-fade-in {
+  animation: auth-fade-in-slide 0.4s ease-out forwards;
+}
+
+@keyframes auth-slide-card1 {
+  0% { opacity: 0; transform: translateY(40px) rotate(-2deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0); }
+}
+@keyframes auth-blur-background {
+  0% { filter: blur(0px); transform: scale(1); opacity: 1; }
+  100% { filter: blur(4px); transform: scale(0.92); opacity: 0.5; }
+}
+@keyframes auth-pop-card2 {
+  0% { opacity: 0; transform: translateY(60px) scale(0.8) rotate(3deg); }
+  50% { opacity: 1; transform: translateY(-10px) scale(1.02) rotate(-1deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+
+.auth-animate-card-1 {
+  animation: auth-slide-card1 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+             auth-blur-background 0.8s cubic-bezier(0.4, 0, 0.2, 1) 1.6s forwards;
+}
+.auth-animate-card-2 {
+  opacity: 0;
+  animation: auth-pop-card2 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 1.6s;
 }
