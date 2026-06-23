@@ -1,7 +1,13 @@
-import { TrendingUp, TrendingDown, Minus, Sparkles } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus, Sparkles, AlertTriangle, AlertCircle } from 'lucide-react'
 import type { Invoice } from '@/types'
 
-export function SmartInsights({ invoices }: { invoices: Invoice[] }) {
+interface SmartInsightsProps {
+  invoices: Invoice[]
+  waterGoal?: number
+  energyGoal?: number
+}
+
+export function SmartInsights({ invoices, waterGoal, energyGoal }: SmartInsightsProps) {
   const currentMonth = new Date().getMonth() + 1
   const currentYear = new Date().getFullYear()
 
@@ -12,12 +18,56 @@ export function SmartInsights({ invoices }: { invoices: Invoice[] }) {
     lastMonthYear = currentYear - 1
   }
 
-  const currentTotal = invoices.filter(i => i.month === currentMonth && i.year === currentYear).reduce((acc, curr) => acc + curr.cost, 0)
-  const lastTotal = invoices.filter(i => i.month === lastMonth && i.year === lastMonthYear).reduce((acc, curr) => acc + curr.cost, 0)
+  // Separar faturas de água e energia ordenadas por data
+  const waterInvoices = invoices.filter(i => i.type === 'WATER')
+  const energyInvoices = invoices.filter(i => i.type === 'ENERGY')
+
+  const currentWater = waterInvoices.find(i => i.month === currentMonth && i.year === currentYear)
+  const lastWater = waterInvoices.find(i => i.month === lastMonth && i.year === lastMonthYear)
+
+  const currentEnergy = energyInvoices.find(i => i.month === currentMonth && i.year === currentYear)
+  const lastEnergy = energyInvoices.find(i => i.month === lastMonth && i.year === lastMonthYear)
+
+  const waterSpent = currentWater ? currentWater.cost : 0
+  const energySpent = currentEnergy ? currentEnergy.cost : 0
+
+  const waterCons = currentWater ? currentWater.consumption : 0
+  const lastWaterCons = lastWater ? lastWater.consumption : 0
+
+  const currentTotal = waterSpent + energySpent
+  const lastTotal = (lastWater ? lastWater.cost : 0) + (lastEnergy ? lastEnergy.cost : 0)
 
   let percentChange = 0
   if (lastTotal > 0) {
     percentChange = ((currentTotal - lastTotal) / lastTotal) * 100
+  }
+
+  // Lógica de Alertas
+  const alerts: { type: 'danger' | 'warning'; message: string }[] = []
+
+  // Alerta de Vazamento: Consumo de água aumentou mais de 20%
+  if (lastWaterCons > 0 && waterCons > lastWaterCons * 1.20) {
+    const increase = ((waterCons - lastWaterCons) / lastWaterCons) * 100
+    alerts.push({
+      type: 'danger',
+      message: `Possível vazamento! Seu consumo de água subiu ${increase.toFixed(1)}% este mês (de ${lastWaterCons}m³ para ${waterCons}m³). Verifique torneiras e descargas.`
+    })
+  }
+
+  // Alerta de estouro de meta de água
+  if (waterGoal && waterSpent > waterGoal) {
+    alerts.push({
+      type: 'warning',
+      message: `Meta de água excedida! O gasto atual (R$ ${waterSpent.toFixed(2)}) ultrapassou a meta de R$ ${waterGoal.toFixed(2)}.`
+    })
+  }
+
+  // Alerta de estouro de meta de energia
+  if (energyGoal && energySpent > energyGoal) {
+    alerts.push({
+      type: 'warning',
+      message: `Meta de energia excedida! O gasto atual (R$ ${energySpent.toFixed(2)}) ultrapassou a meta de R$ ${energyGoal.toFixed(2)}.`
+    })
   }
 
   return (
@@ -36,9 +86,9 @@ export function SmartInsights({ invoices }: { invoices: Invoice[] }) {
         Insights Inteligentes
       </h3>
       
-      <div className="relative z-10">
+      <div className="relative z-10 space-y-4">
         {(lastTotal > 0 && currentTotal > 0) ? (
-          <>
+          <div>
             <p className="text-xl font-medium text-emerald-900 dark:text-emerald-100 mb-2">
               {percentChange < 0 ? 'Parabéns! Seus gastos caíram ' : percentChange > 0 ? 'Atenção, seus gastos aumentaram ' : 'Seus gastos estão iguais aos do último mês '}
               {percentChange !== 0 && (
@@ -50,16 +100,16 @@ export function SmartInsights({ invoices }: { invoices: Invoice[] }) {
             <p className="text-sm text-emerald-700/80 dark:text-emerald-400/80">
               Comparando R$ {lastTotal.toFixed(2)} (mês passado) com R$ {currentTotal.toFixed(2)} (atual).
             </p>
-          </>
+          </div>
         ) : (lastTotal > 0 && currentTotal === 0) ? (
-          <>
+          <div>
             <p className="text-xl font-medium text-emerald-900 dark:text-emerald-100 mb-2">
               Registre suas faturas deste mês para comparar e gerar insights.
             </p>
             <p className="text-sm text-emerald-700/80 dark:text-emerald-400/80">
               Gasto total no mês passado: R$ {lastTotal.toFixed(2)}.
             </p>
-          </>
+          </div>
         ) : (currentTotal > 0) ? (
           <p className="text-xl font-medium text-emerald-900 dark:text-emerald-100 mb-2">
             Primeiro mês de uso! Registre o próximo mês para ver comparações de economia.
@@ -68,6 +118,29 @@ export function SmartInsights({ invoices }: { invoices: Invoice[] }) {
           <p className="text-xl font-medium text-emerald-900 dark:text-emerald-100 mb-2">
             Acompanhe seus gastos para ver tendências.
           </p>
+        )}
+
+        {/* Exibição de Alertas Lógicos */}
+        {alerts.length > 0 && (
+          <div className="pt-2 border-t border-emerald-100/50 dark:border-emerald-800/30 space-y-2">
+            {alerts.map((alert, index) => (
+              <div 
+                key={index} 
+                className={`flex gap-2 items-start p-3 rounded-2xl text-sm ${
+                  alert.type === 'danger' 
+                    ? 'bg-red-50 dark:bg-red-950/30 text-red-800 dark:text-red-300 border border-red-100 dark:border-red-900/30' 
+                    : 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30'
+                }`}
+              >
+                {alert.type === 'danger' ? (
+                  <AlertCircle className="w-5 h-5 shrink-0 text-red-500" />
+                ) : (
+                  <AlertTriangle className="w-5 h-5 shrink-0 text-amber-500" />
+                )}
+                <span>{alert.message}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

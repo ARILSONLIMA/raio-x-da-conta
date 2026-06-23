@@ -50,7 +50,7 @@ export function DashboardCharts({ water, energy }: ChartsProps) {
         <h3 className="text-xl font-bold text-sky-600 dark:text-sky-400 mb-6 flex items-center gap-2">
             <Droplet className="w-5 h-5" /> Consumo de Água
         </h3>
-        <div className="h-[300px] w-full font-sans text-sm">
+        <div className="h-[250px] w-full font-sans text-sm">
           {waterData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={waterData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -86,7 +86,7 @@ export function DashboardCharts({ water, energy }: ChartsProps) {
         <h3 className="text-xl font-bold text-amber-500 mb-6 flex items-center gap-2">
             <Zap className="w-5 h-5" /> Consumo de Energia
         </h3>
-        <div className="h-[300px] w-full font-sans text-sm">
+        <div className="h-[250px] w-full font-sans text-sm">
           {energyData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={energyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

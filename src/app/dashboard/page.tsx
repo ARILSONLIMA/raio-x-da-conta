@@ -105,7 +105,11 @@ export default async function DashboardPage(props: { searchParams: Promise<{ [ke
                 waterSpent={waterSpent}
                 energySpent={energySpent}
               />
-              <SmartInsights invoices={invoicesSerialized} />
+              <SmartInsights 
+                invoices={invoicesSerialized} 
+                waterGoal={Number(user.waterGoal)} 
+                energyGoal={Number(user.energyGoal)} 
+              />
             </div>
             {invoices.length > 0 ? (
               <DashboardCharts water={waterInvoices} energy={energyInvoices} />
