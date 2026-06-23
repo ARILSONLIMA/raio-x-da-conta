@@ -81,7 +81,7 @@ export default function SimulatorPage() {
 
     return (
         <div className="flex-1 flex flex-col h-full relative">
-            <TopHeader />
+            <TopHeader title="Simulador de Gastos" subtitle="Descubra quanto cada aparelho consome na sua conta de luz no fim do mês." />
             
             <div className="flex-1 overflow-y-auto p-4 md:p-8 hide-scrollbar pb-24 text-slate-800">
                 <style>{`
@@ -99,23 +99,8 @@ export default function SimulatorPage() {
                 `}</style>
 
                 <div className="max-w-3xl mx-auto flex flex-col justify-center min-h-[calc(100vh-14rem)]">
-                    <div className="bg-white dark:bg-slate-900 w-full rounded-3xl shadow-xl overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-800">
-                        
-                        {/* Cabeçalho Principal */}
-                        <div className="px-8 pt-10 pb-6">
-                            <div className="flex items-center gap-4 mb-3">
-                                <div className="p-3 bg-sky-100 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 rounded-2xl">
-                                    <Calculator className="w-8 h-8" />
-                                </div>
-                                <div>
-                                    <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">Simulador de Gastos</h1>
-                                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Descubra quanto cada aparelho consome na sua conta de luz no fim do mês.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="px-8 pb-8">
-                            <div className="border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 rounded-2xl p-6">
+                    <div className="bg-white dark:bg-slate-900 w-full rounded-3xl shadow-xl overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-800 p-8">
+                        <div className="border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 rounded-2xl p-6">
                                 
                                 {/* Título Secundário */}
                                 <div className="flex items-center gap-2 mb-6 text-amber-500">
@@ -286,6 +271,5 @@ export default function SimulatorPage() {
                     </div>
                 </div>
             </div>
-        </div>
     )
 }
