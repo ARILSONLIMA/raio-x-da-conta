@@ -21,6 +21,28 @@ interface ChartsProps {
   energy: InvoiceData[]
 }
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-xl font-sans text-xs flex flex-col gap-1">
+        <p className="font-bold text-slate-800 dark:text-slate-200 mb-1">{label}</p>
+        {payload.map((pld: any, idx: number) => {
+          const isValor = pld.name.includes('Valor');
+          return (
+            <p key={idx} style={{ color: pld.color || pld.fill }} className="font-semibold flex items-center gap-1.5">
+              <span>{pld.name}:</span>
+              <span className="text-slate-800 dark:text-slate-100">
+                {isValor ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pld.value) : pld.value}
+              </span>
+            </p>
+          );
+        })}
+      </div>
+    )
+  }
+  return null
+}
+
 export function DashboardCharts({ water, energy }: ChartsProps) {
   const formatData = (data: InvoiceData[]) => {
     return data.map(item => ({
@@ -60,13 +82,13 @@ export function DashboardCharts({ water, energy }: ChartsProps) {
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="#E2E8F0" strokeOpacity={0.5} />
+                <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748b'}} dy={10} />
                 <YAxis yAxisId="left" orientation="left" stroke="#0ea5e9" axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748b'}} />
                 <YAxis yAxisId="right" orientation="right" stroke="#10b981" axisLine={false} tickLine={false} tickFormatter={(val) => `R$ ${val}`} tick={{fontSize: 11, fontWeight: 'bold'}} />
                 <Tooltip 
                   cursor={{fill: 'rgba(150,150,150,0.05)'}} 
-                  contentStyle={{ backgroundColor: 'var(--card, #fff)', color: 'var(--card-foreground, #000)', borderRadius: '12px', border: '1px solid var(--border)' }}
+                  content={<CustomTooltip />}
                 />
                 <Legend wrapperStyle={{ paddingTop: '10px' }} iconType="circle" />
                 <Bar yAxisId="left" dataKey="consumo" name="Consumo (m³)" fill="#0ea5e9" radius={[6, 6, 0, 0]} maxBarSize={32} />
@@ -96,13 +118,13 @@ export function DashboardCharts({ water, energy }: ChartsProps) {
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="#E2E8F0" strokeOpacity={0.5} />
+                <CartesianGrid strokeDasharray="5 5" vertical={false} stroke="rgba(148, 163, 184, 0.15)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748b'}} dy={10} />
                 <YAxis yAxisId="left" orientation="left" stroke="#f59e0b" axisLine={false} tickLine={false} tick={{fontSize: 11, fill: '#64748b'}} />
                 <YAxis yAxisId="right" orientation="right" stroke="#10b981" axisLine={false} tickLine={false} tickFormatter={(val) => `R$ ${val}`} tick={{fontSize: 11, fontWeight: 'bold'}} />
                 <Tooltip 
                   cursor={{fill: 'rgba(150,150,150,0.05)'}} 
-                  contentStyle={{ backgroundColor: 'var(--card, #fff)', color: 'var(--card-foreground, #000)', borderRadius: '12px', border: '1px solid var(--border)' }}
+                  content={<CustomTooltip />}
                 />
                 <Legend wrapperStyle={{ paddingTop: '10px' }} iconType="circle" />
                 <Bar yAxisId="left" dataKey="consumo" name="Consumo (kWh)" fill="#f59e0b" radius={[6, 6, 0, 0]} maxBarSize={32} />

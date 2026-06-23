@@ -59,10 +59,10 @@ export function SidebarClient() {
                 key={item.href} 
                 href={item.href}
                 onClick={closeSidebar}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-r-xl border-l-4 font-medium transition-all duration-200 ${
                   isActive 
-                  ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400' 
-                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-sky-50/70 dark:bg-sky-500/10 border-sky-500 text-sky-600 dark:text-sky-400 font-semibold' 
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" />
